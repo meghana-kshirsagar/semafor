@@ -220,7 +220,7 @@ public class DataPrep {
 			throws IOException {
 		final DataPointWithFrameElements dataPoint = new DataPointWithFrameElements(sentence, feline);
 		final String frame = dataPoint.getFrameName();
-		final String[] allFrameElements = FEDict.getInstance().lookupFrameElements(frame);
+		final String[] allFrameElements = FEDict.getInstance().lookupFrameElements(frame.replaceAll("LU_","")); // frust-easy
 		final List<int[][]> featuresList = new ArrayList<int[][]>();
 
 		final List<Pair<List<int[]>, List<String>>> allFeaturesAndSpanLines = Lists.newArrayList();
@@ -265,8 +265,8 @@ public class DataPrep {
 		final List<int[]> features = Lists.newArrayList();
 		final List<String> spanLines = Lists.newArrayList();
 		spanLines.add(Joiner.on("\t").join(
-				dp.getSentenceNum(), fe, frame, dp.getTargetTokenIdxs()[0],
-				dp.getTargetTokenIdxs()[dp.getTargetTokenIdxs().length-1], feIndex));
+				dp.getSentenceNum(), fe, frame.replaceAll("LU_",""), dp.getTargetTokenIdxs()[0],
+				dp.getTargetTokenIdxs()[dp.getTargetTokenIdxs().length-1], feIndex));	// frust-easy
 		// put gold span first
 		final List<SpanAndParseIdx> goldFirst =
 				Lists.newArrayListWithCapacity(candidateSpans.size());

@@ -80,17 +80,39 @@ public class FeatureExtractor {
 										String roleName,
 										ConjoinLevel level,
 										Multiset<String> featureMap) {
-		switch(level) {
-			case FRAME_AND_ROLE_NAME:
-				featureMap.add(UNDERSCORE.join(featureName, frameAndRoleName));
-				//intentional fall through
-			case ROLE_NAME:
-				featureMap.add(UNDERSCORE.join(featureName, roleName));
-			case NO_CONJOIN:
-				featureMap.add(featureName);
-			default:
-				break;
+
+
+        // frust-easy: fire only on source (i.e fn examples)
+	    if(! frameAndRoleName.contains("LU_") ) {
+    	    switch(level) {
+        	    case FRAME_AND_ROLE_NAME:
+            	    featureMap.add(UNDERSCORE.join(featureName, frameAndRoleName));
+                	//intentional fall through
+	            case ROLE_NAME:
+    	            featureMap.add(UNDERSCORE.join(featureName, roleName));
+        	    case NO_CONJOIN:
+            	    featureMap.add(featureName);
+	            default:
+    	            break;
+        	}
+	    }
+		else {
+			frameAndRoleName = frameAndRoleName.replaceAll("LU_","");
 		}
+
+        // frust-easy: fire on both source (fn) and target (exemplars)
+        switch(level) {
+            case FRAME_AND_ROLE_NAME:
+                featureMap.add(UNDERSCORE.join("LU",featureName, frameAndRoleName));
+                //intentional fall through
+            case ROLE_NAME:
+                featureMap.add(UNDERSCORE.join("LU",featureName, roleName));
+            case NO_CONJOIN:
+                featureMap.add(UNDERSCORE.join("LU",featureName));
+            default:
+                break;
+        }
+
 	}
 
 	public Multiset<String> extractFeatures(DataPointWithFrameElements dp,
