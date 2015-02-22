@@ -2,11 +2,16 @@
 
 # reg: $1
 #************************************ PREPROCESSING *******************************************#
-suffix=$1;
-infix=test
 
 source "$(dirname `readlink -f ${0}`)/training/config.sh"
-pwd
+
+suffix=$1;
+#model_dir=$2;
+
+#echo model dir = ${model_dir}
+
+infix=test
+
 processedfile_new=${datadir}/lu_data/lus.test.sentences.all.lemma.tags
 processedfile=$processedfile_new
 tokenizedfile=${datadir}/lu_data/lus.test.sentences.tokenized
@@ -17,7 +22,14 @@ frames_single_file="/usr0/home/mkshirsa/research/transf_learn_semafor/framenet_d
 echo ${CLASSPATH}
 echo ${CLASSPATH_OLD}
 
-temp=temp_adadelta_fn_with_lus/on_lus
+#temp=temp_adadelta_fn_with_lus/on_lus
+#temp=temp_ancestor_notag/on_lus
+temp=temp_ancestors/on_lus
+#temp=temp_siblings_fn_lus/on_lus
+#temp=temp_siblings/on_lus
+#temp=temp_lus_only/on_lus
+#temp=temp_frust_fn_lus/on_lus
+#temp=temp_ancestors_fn_lus/on_lus
 mkdir ${temp}
 echo "temp directory: $temp"
 
@@ -27,7 +39,7 @@ echo "Start:0"
 echo "End:${end}"
 
 #**********************************ARGUMENT IDENTIFICATION********************************************#
-$JAVA_HOME_BIN/java -classpath ${CLASSPATH} -Xms4000m -Xmx4000m edu.cmu.cs.lti.ark.fn.parsing.CreateAlphabet \
+$JAVA_HOME_BIN/java -classpath ${CLASSPATH} -Xms4000m -Xmx8g edu.cmu.cs.lti.ark.fn.parsing.CreateAlphabet \
 ${framesfile_new} \
 ${processedfile_new} \
 ${temp}/file.fe.events.bin \

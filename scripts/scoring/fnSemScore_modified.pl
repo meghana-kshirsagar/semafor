@@ -208,7 +208,9 @@ MAIN:{
             %scoreFeFeats = %{$toScoreFe->{$sent}};
         }
 	$scoreSum = &sumFrFeatValues(\%scoreFrFeats);
+	print "frame score: $scoreSum\n";
 	$scoreSum += &sumFeFeatValues(\%scoreFeFeats);
+	print "fe score: ".&sumFeFeatValues(\%scoreFeFeats)."\n";
 	
 	print "goldSum = $goldSum\n" if $DEBUG;
 	print "scoreSum = $scoreSum\n" if $DEBUG;

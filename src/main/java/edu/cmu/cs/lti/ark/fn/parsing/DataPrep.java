@@ -206,6 +206,7 @@ public class DataPrep {
 		final String feline = feLines.get(feIndex);
 		final List<SpanAndParseIdx> candidateTokens = candidateLines.get(feIndex);
 		final int sentNum = parseInt(feline.split("\t")[7]);
+		//System.out.print("\n>> SENT: "+sentNum); // meghanak
 		final String parseLine = tagLines.get(sentNum);
 		final Sentence sentence = Sentence.fromAllLemmaTagsArray(AllLemmaTags.readLine(parseLine));
 		final List<int[][]> allData = getTrainData(feline, candidateTokens, sentence, spanFilename);

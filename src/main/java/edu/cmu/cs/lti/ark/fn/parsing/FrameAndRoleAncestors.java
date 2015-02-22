@@ -1,4 +1,4 @@
-package edu.cmu.cs.lti.ark.fn.identification;
+package edu.cmu.cs.lti.ark.fn.parsing;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.HashMultimap;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class FrameAndRoleAncestors {
 	private static final String DEFAULT_ANCESTORS_FILE = "ancestors.csv";
 	private static final String DEFAULT_PARENTS_FILE = "frame_parents.csv";
-	private static final String DEFAULT_ROLE_SUPPLIER = "frame_parent_rolemappings.csv";
+	private static final String DEFAULT_ROLES_FILE = "frame_parent_rolemappings.csv";
 	public static final int PARENT = 1, ANCESTOR = 2; // mk: ancestors
 
 	private static InputSupplier<InputStream> DEFAULT_ANCESTOR_SUPPLIER = new InputSupplier<InputStream>() {
@@ -33,22 +33,29 @@ public class FrameAndRoleAncestors {
 			return getClass().getClassLoader().getResourceAsStream(DEFAULT_PARENTS_FILE);
 		} };
 
+	private static InputSupplier<InputStream> DEFAULT_ROLE_SUPPLIER = new InputSupplier<InputStream>() {
+		@Override public InputStream getInput() throws IOException {
+			return getClass().getClassLoader().getResourceAsStream(DEFAULT_ROLES_FILE);
+		} };
+
 	private final Multimap<String, String> ancestors;
 	private final Multimap<String, String> childToAncestorRoleMap;
 
 	public FrameAndRoleAncestors(Multimap<String, String> ancestors) {
 		this.ancestors = ancestors;
+		this.childToAncestorRoleMap = HashMultimap.create();
 	}
 
-	public FrameAndRoleAncestors(Multimap<String, String> rolemap) {
+	public FrameAndRoleAncestors(Multimap<String, String> ancestors, Multimap<String, String> rolemap) {
+		this.ancestors = ancestors;
 		this.childToAncestorRoleMap = rolemap;
 	}
 
-	public static FrameAndRoleAncestors loadAncestors(int type) throws IOException {
+	public static Multimap<String, String> loadAncestors(int type) throws IOException {
 		if(type == PARENT)
-			return load(CharStreams.newReaderSupplier(DEFAULT_PARENT_SUPPLIER, Charsets.UTF_8));
+			return readCsv(CharStreams.newReaderSupplier(DEFAULT_PARENT_SUPPLIER, Charsets.UTF_8));
 		else
-			return load(CharStreams.newReaderSupplier(DEFAULT_ANCESTOR_SUPPLIER, Charsets.UTF_8));
+			return readCsv(CharStreams.newReaderSupplier(DEFAULT_ANCESTOR_SUPPLIER, Charsets.UTF_8));
 	}
 
 	public static FrameAndRoleAncestors load(InputSupplier<InputStreamReader> input) throws IOException {
@@ -67,7 +74,14 @@ public class FrameAndRoleAncestors {
 		return ancestors;
 	}
 
-	public static FrameAndRoleAncestors loadRoles() throws IOException {
+	public static FrameAndRoleAncestors loadAncestorsAndRoles(int type) throws IOException {
+		Multimap<String, String> anc = loadAncestors(type);
+		Multimap<String, String> roles = loadRoles();
+		FrameAndRoleAncestors obj = new FrameAndRoleAncestors(anc, roles);
+		return obj;
+	}
+
+	public static Multimap<String, String> loadRoles() throws IOException {
 		return loadRolesfile(CharStreams.newReaderSupplier(DEFAULT_ROLE_SUPPLIER, Charsets.UTF_8));
 	}
 
