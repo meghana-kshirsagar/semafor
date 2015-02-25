@@ -20,13 +20,14 @@ frames_single_file="${SEMAFOR_HOME}/../framenet_data/framesSingleFile.xml";
 echo ${CLASSPATH}
 echo ${CLASSPATH_OLD}
 
-#temp=temp_arg_`date +%s`_$1
-#temp=temp_dipanjan_correct
-#temp=temp_frust_fn_lus/argmodel_100
-temp=temp_adadelta_fn_with_lus
-#temp=temp_adadelta_baseline
-#temp=temp_mstparsed_by_me
-mkdir ${temp}
+#temp=temp_frust_fn_lus/on_fn
+#temp=temp_siblings/on_fn
+#temp=temp_siblings_fn_lus/on_fn
+#temp=temp_ancestors_fn_lus/on_fn
+#temp=temp_lus_only/on_fn
+#temp=temp_ancestors/on_fn
+temp=temp_adadelta_fn_with_lus/on_fn
+mkdir -p ${temp}
 echo "temp directory: $temp"
 
 end=`wc -l ${tokenizedfile}`
@@ -35,15 +36,15 @@ echo "Start:0"
 echo "End:${end}"
 
 #**********************************ARGUMENT IDENTIFICATION********************************************#
-$JAVA_HOME_BIN/java -classpath ${CLASSPATH} -Xms4000m -Xmx4000m edu.cmu.cs.lti.ark.fn.parsing.CreateAlphabet \
-${framesfile_new} \
-${processedfile_new} \
-${temp}/file.fe.events.bin \
-${model_dir}/scan/parser.conf.unlabeled \
-${temp}/file.frame.elements.spans \
-false \
-1 \
-null > /tmp/test.spans.out
+#$JAVA_HOME_BIN/java -classpath ${CLASSPATH} -Xms4000m -Xmx4000m edu.cmu.cs.lti.ark.fn.parsing.CreateAlphabet \
+#${framesfile_new} \
+#${processedfile_new} \
+#${temp}/file.fe.events.bin \
+#${model_dir}/scan/parser.conf.unlabeled \
+#${temp}/file.frame.elements.spans \
+#false \
+#1 \
+#null > /tmp/test.spans.out
 
 #exit;
 

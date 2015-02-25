@@ -16,6 +16,7 @@ object HingeLoss extends SubDifferentiableLoss[MultiClassTrainingExample] {
     val MultiClassTrainingExample(featsByLabel, goldLabelIdx) = example
     // cost-augmented decoding
     val scoresByLabel: Array[Double] = featsByLabel.zipWithIndex.map { case (feats, roleIdx) =>
+      //val cost = if (roleIdx == goldLabelIdx) 0 else if (goldLabelIdx > 0 && roleIdx == 0) 1.2 else 1 //mk: recall oriented training
       val cost = if (roleIdx == goldLabelIdx) 0 else 1
       (feats dot weights) + cost
     }

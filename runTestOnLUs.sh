@@ -10,14 +10,14 @@ pwd
 processedfile_new=${datadir}/lu_data/lus.test.sentences.all.lemma.tags
 processedfile=$processedfile_new
 tokenizedfile=${datadir}/lu_data/lus.test.sentences.tokenized
-fefile=${datadir}/lu_data/lus.test.sentences.frames.elements.oldformat
+fefile=${datadir}/lu_data/lus.test.sentences.frames.elements.nooverlap.oldformat
 framesfile_new=${datadir}/lu_data/lus.test.sentences.frames
 relation_modified_file="/usr0/home/mkshirsa/research/transf_learn_semafor/framenet_data/frRelationModified.xml";
 frames_single_file="/usr0/home/mkshirsa/research/transf_learn_semafor/framenet_data/framesSingleFile.xml";
 echo ${CLASSPATH}
 echo ${CLASSPATH_OLD}
 
-temp=temp_adadelta_fn_with_lus/on_lus
+temp=temp_fn_lus_recall/on_lus
 mkdir ${temp}
 echo "temp directory: $temp"
 
@@ -36,7 +36,7 @@ ${temp}/file.frame.elements.spans \
 false \
 1 \
 null > /tmp/test.spans.out
-
+#
 #exit;
 
 $JAVA_HOME_BIN/java -classpath ${CLASSPATH_OLD} -Xms4000m -Xmx4000m edu.cmu.cs.lti.ark.fn.parsing.DecodingMainArgs \
