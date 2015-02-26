@@ -17,7 +17,7 @@ frames_single_file="/usr0/home/mkshirsa/research/transf_learn_semafor/framenet_d
 echo ${CLASSPATH}
 echo ${CLASSPATH_OLD}
 
-temp=temp_fn_lus_recall/on_lus
+temp=temp_semlink/on_lus
 mkdir ${temp}
 echo "temp directory: $temp"
 
@@ -27,15 +27,15 @@ echo "Start:0"
 echo "End:${end}"
 
 #**********************************ARGUMENT IDENTIFICATION********************************************#
-$JAVA_HOME_BIN/java -classpath ${CLASSPATH} -Xms4000m -Xmx4000m edu.cmu.cs.lti.ark.fn.parsing.CreateAlphabet \
-${framesfile_new} \
-${processedfile_new} \
-${temp}/file.fe.events.bin \
-${model_dir}/scan/parser.conf.unlabeled \
-${temp}/file.frame.elements.spans \
-false \
-1 \
-null > /tmp/test.spans.out
+#$JAVA_HOME_BIN/java -classpath ${CLASSPATH} -Xms4000m -Xmx4000m edu.cmu.cs.lti.ark.fn.parsing.CreateAlphabet \
+#${framesfile_new} \
+#${processedfile_new} \
+#${temp}/file.fe.events.bin \
+#${model_dir}/scan/parser.conf.unlabeled \
+#${temp}/file.frame.elements.spans \
+#false \
+#1 \
+#null > /tmp/test.spans.out
 #
 #exit;
 
@@ -48,7 +48,7 @@ ${temp}/file.predict.frame.elements \
 ${fefile} \
 overlapcheck > /tmp/output  ## nooverlapcheck to get Naive search results
 
-#exit;
+exit;
 
 #**********************************END OF ARGUMENT IDENTIFICATION********************************************#
 
