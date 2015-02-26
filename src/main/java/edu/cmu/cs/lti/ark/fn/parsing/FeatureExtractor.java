@@ -32,6 +32,8 @@ import edu.cmu.cs.lti.ark.util.nlp.parse.DependencyParse;
 
 import java.util.List;
 
+import edu.cmu.cs.lti.ark.util.ds.GuideFeatureSpan;
+
 import static edu.cmu.cs.lti.ark.fn.parsing.CandidateFrameElementFilters.isEmptySpan;
 import static edu.cmu.cs.lti.ark.fn.parsing.FeatureExtractor.ConjoinLevel.*;
 import static java.lang.Math.max;
@@ -262,6 +264,17 @@ public class FeatureExtractor {
 			
 			// length of the filler span
 			conjoinAndAdd("len_" + quantizeLength(endNode - startNode + 1), frameAndRoleName, roleName, FRAME_AND_ROLE_NAME, featureMap);
+
+			// mk: add features if guides available
+            if(fillerSpanRange instanceof GuideFeatureSpan) {
+				System.err.println("Adding guide features");
+		    	GuideFeatureSpan gfspan = ((GuideFeatureSpan)fillerSpanRange);
+				conjoinAndAdd("GUIDE_", frameAndRoleName, roleName, FRAME_AND_ROLE_NAME, featureMap);
+				conjoinAndAdd("GUIDE_role:"+gfspan.getRole(), frameAndRoleName, roleName, FRAME_AND_ROLE_NAME, featureMap);
+				conjoinAndAdd("GUIDE_frame:"+gfspan.getFrame(), frameAndRoleName, roleName, FRAME_AND_ROLE_NAME, featureMap);
+				if(gfspan.getRole().equalsIgnoreCase(roleName))
+					conjoinAndAdd("GUIDE_SAME_", frameAndRoleName, roleName, NO_CONJOIN, featureMap);
+			}
 		}
 		return featureMap;
 	}

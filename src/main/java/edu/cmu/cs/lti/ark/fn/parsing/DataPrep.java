@@ -42,6 +42,8 @@ import javax.annotation.concurrent.NotThreadSafe;
 import java.io.*;
 import java.util.*;
 
+import edu.cmu.cs.lti.ark.util.ds.GuideFeatureSpan;
+
 import static edu.cmu.cs.lti.ark.fn.parsing.CandidateFrameElementFilters.EMPTY_SPAN;
 import static edu.cmu.cs.lti.ark.fn.parsing.CandidateFrameElementFilters.createSpanRange;
 import static edu.cmu.cs.lti.ark.fn.parsing.DataPrep.SpanAndParseIdx.EMPTY_SPAN_AND_PARSE_IDX;
@@ -69,6 +71,11 @@ public class DataPrep {
 	/** is it generating an alphabet or using an alphabet */
 	public static boolean genAlpha = true; // TODO: shouldn't be static
 
+    // mk: for guide features
+    private static GuideSystem guides;
+    private static boolean loaded = false;
+	private static int gsType = GuideSystem.SEMLINK; // GuideSystem.EXEMPLAR;
+
 	public static class SpanAndParseIdx {
 		public final static SpanAndParseIdx EMPTY_SPAN_AND_PARSE_IDX = new SpanAndParseIdx(EMPTY_SPAN, 0);
 		public final Range0Based span;
@@ -94,6 +101,14 @@ public class DataPrep {
 		new FileOutputStream(new File(spanFilename), false).close(); // clobber spans file. this is gross
 		this.feLines = feLines;
 		this.tagLines = tagLines;
+
+		// mk: guides
+        if(!loaded) {
+			System.err.println("Finished loading Guide System, type: "+gsType);
+            guides = new GuideSystem(gsType);
+            loaded = true;
+        }
+
 		candidateLines = load(tagLines, feLines, kBestParse);
 	}
 
@@ -123,6 +138,19 @@ public class DataPrep {
 		}
 		addConstituents(spanMatrix, heads, nodes);
 		final ArrayList<SpanAndParseIdx> spanList = Lists.newArrayList();
+
+
+        // mk: add spans from guide system.. 
+        String input = bestParse.getSentence();
+        input = input.substring(input.indexOf(' ')+1); // ignore the first word as it's = null_word
+        final List<SpanAndParseIdx> guideSpans = getGuideSpans(input);
+        for (SpanAndParseIdx sp : guideSpans) {
+   	        //if (!spanMatrix[sp.span.start][sp.span.end]) // debug print new SRL spans
+       		System.err.println("[GUIDES] "+sp.span.start+":"+sp.span.end);
+           	spanList.add(sp);
+            spanMatrix[sp.span.start][sp.span.end] = false;
+   	    }
+
 		for (int i : xrange(length)) {
 			for (int j : xrange(length)) {
 				if (spanMatrix[i][j]) {
@@ -134,6 +162,24 @@ public class DataPrep {
 		// null span is always a candidate
 		spanList.add(EMPTY_SPAN_AND_PARSE_IDX);
 		return spanList;
+	}
+
+	private static List<SpanAndParseIdx> getGuideSpans(String sentence) {
+		// mk: guides
+        if(!loaded) {
+			System.err.println("Finished loading Guide System, type: "+gsType);
+            guides = new GuideSystem(gsType);
+            loaded = true;
+        }
+
+        List<SpanAndParseIdx> resultSpanList = Lists.newArrayList();
+		Collection<GuideFeatureSpan> spans = guides.getGuideSpans(sentence);
+		if(spans != null) {
+			for(GuideFeatureSpan gs: spans) {
+				resultSpanList.add(new SpanAndParseIdx(gs,0));
+			}
+		}
+		return resultSpanList;
 	}
 
 	/** loads data needed for feature extraction */

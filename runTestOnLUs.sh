@@ -2,22 +2,27 @@
 
 # reg: $1
 #************************************ PREPROCESSING *******************************************#
+source "$(dirname `readlink -f ${0}`)/training/config.sh"
+
 suffix=$1;
+model_dir=$2;
+temp_dir=$3
 infix=test
 
-source "$(dirname `readlink -f ${0}`)/training/config.sh"
-pwd
+echo NEW MODEL DIR: $model_dir
+
 processedfile_new=${datadir}/lu_data/lus.test.sentences.all.lemma.tags
 processedfile=$processedfile_new
 tokenizedfile=${datadir}/lu_data/lus.test.sentences.tokenized
-fefile=${datadir}/lu_data/lus.test.sentences.frames.elements.oldformat
+fefile=${datadir}/lu_data/lus.test.sentences.frames.elements.nooverlap.oldformat
 framesfile_new=${datadir}/lu_data/lus.test.sentences.frames
 relation_modified_file="/usr0/home/mkshirsa/research/transf_learn_semafor/framenet_data/frRelationModified.xml";
 frames_single_file="/usr0/home/mkshirsa/research/transf_learn_semafor/framenet_data/framesSingleFile.xml";
 echo ${CLASSPATH}
 echo ${CLASSPATH_OLD}
 
-temp=temp_adadelta_fn_with_lus/on_lus
+#temp=temp_lus_only/on_lus
+temp=$temp_dir
 mkdir ${temp}
 echo "temp directory: $temp"
 
@@ -27,16 +32,16 @@ echo "Start:0"
 echo "End:${end}"
 
 #**********************************ARGUMENT IDENTIFICATION********************************************#
-$JAVA_HOME_BIN/java -classpath ${CLASSPATH} -Xms4000m -Xmx4000m edu.cmu.cs.lti.ark.fn.parsing.CreateAlphabet \
-${framesfile_new} \
-${processedfile_new} \
-${temp}/file.fe.events.bin \
-${model_dir}/scan/parser.conf.unlabeled \
-${temp}/file.frame.elements.spans \
-false \
-1 \
-null > /tmp/test.spans.out
-
+#$JAVA_HOME_BIN/java -classpath ${CLASSPATH} -Xms4000m -Xmx4000m edu.cmu.cs.lti.ark.fn.parsing.CreateAlphabet \
+#${framesfile_new} \
+#${processedfile_new} \
+#${temp}/file.fe.events.bin \
+#${model_dir}/scan/parser.conf.unlabeled \
+#${temp}/file.frame.elements.spans \
+#false \
+#1 \
+#null 
+#
 #exit;
 
 $JAVA_HOME_BIN/java -classpath ${CLASSPATH_OLD} -Xms4000m -Xmx4000m edu.cmu.cs.lti.ark.fn.parsing.DecodingMainArgs \
@@ -46,9 +51,9 @@ ${temp}/file.fe.events.bin \
 ${temp}/file.frame.elements.spans \
 ${temp}/file.predict.frame.elements \
 ${fefile} \
-overlapcheck > /tmp/output  ## nooverlapcheck to get Naive search results
+overlapcheck > /tmp/output.${suffix}  ## nooverlapcheck to get Naive search results
 
-#exit;
+exit;
 
 #**********************************END OF ARGUMENT IDENTIFICATION********************************************#
 

@@ -2,11 +2,13 @@
 
 # reg: $1
 #************************************ PREPROCESSING *******************************************#
+source "$(dirname `readlink -f ${0}`)/training/config.sh"
 suffix=$1;
+model_dir=$2;
 infix=test
 
-source "$(dirname `readlink -f ${0}`)/training/config.sh"
-pwd
+echo NEW MODEL DIR: $model_dir
+
 training_dir_old=${datadir}/naacl2012_splits/from_dipanjan/another_set
 #processedfile=${training_dir_old}/cv.${infix}.sentences.all.lemma.tags
 processedfile_new=${datadir}/naacl2012_splits/mstparsed_by_me/cv.${infix}.sentences.all.lemma.tags
@@ -23,10 +25,11 @@ echo ${CLASSPATH_OLD}
 #temp=temp_arg_`date +%s`_$1
 #temp=temp_dipanjan_correct
 #temp=temp_frust_fn_lus/argmodel_100
-temp=temp_adadelta_fn_with_lus
-#temp=temp_adadelta_baseline
-#temp=temp_mstparsed_by_me
-mkdir ${temp}
+#temp=temp_adadelta_fn_with_lus
+#temp=temp_lus_guides/on_fn
+#temp=temp_semlink_guides/on_fn
+temp=temp_srl/on_fn
+mkdir -p ${temp}
 echo "temp directory: $temp"
 
 end=`wc -l ${tokenizedfile}`

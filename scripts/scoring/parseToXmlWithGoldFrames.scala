@@ -29,23 +29,25 @@ val FRAME_NAME_FIELD = 3
 val TARGET_FIELD = 5
 val SENTENCE_FIELD = 7
 
-val HOME_DIR = new File(System.getProperty("user.home"))
-val BASE_DIR = new File(HOME_DIR, "code/semafor")
-val SEMAFOR_HOME = new File(BASE_DIR, "semafor")
-val DATA_DIR = new File(SEMAFOR_HOME, "training/data/naacl2012")
+val SEMAFOR_HOME="/usr0/home/mkshirsa/research/transf_learn_semafor/semafor"
+val SEMAFOR_ADADELTA="/usr0/home/mkshirsa/research/transf_learn_semafor/semafor_adadelta"
+val MODEL_DIR=new File(SEMAFOR_ADADELTA, "training/models")
+val DATA_DIR = new File(SEMAFOR_HOME, "training/data/fn_data")
 val TOKENIZED_FILE_TEMPLATE = "cv.%s.sentences.tokenized"
 val FRAME_ID_FILE_TEMPLATE = "cv.%s.sentences.frames"
-val DEP_PARSE_FILE_TEMPLATE = "cv.%s.sentences.maltparsed.conll"
+val DEP_PARSE_FILE_TEMPLATE = "cv.%s.sentences.mstparsed.conll"
 val ALL_LEMMA_TAGS_FILE_TEMPLATE = "cv.%s.sentences.all.lemma.tags"
 
 
 // CLI args:
 val modelName = args(0) // "adadelta_20150122" // "turbo_matsumoto_20140702"
 val cvFold = args(1) // "dev" or "test"
+val experimentsDir = args(2)
 
-val experimentsDir = new File(new File(SEMAFOR_HOME, "experiments"), modelName)
-val modelDir = new File(experimentsDir, "model")
+val modelDir = new File(MODEL_DIR,modelName)
 val resultsDir = new File(experimentsDir, "output")
+
+System.err.println("model_dir: "+modelDir)
 
 // load up the model
 val sem = Semafor.getSemaforInstance(modelDir.getCanonicalPath)
@@ -64,7 +66,7 @@ def setSentenceId(line: String, sentenceId: String): String = {
 def predictArgsForSentence(sentence: Sentence, frames: List[String], kBest: Int, sem: Semafor): List[String] = {
   // predictArgumentLines needs the sentenceId field to be 0, but we don't want to forget it
   val sentenceId = frames(0).split("\t")(SENTENCE_FIELD)
-  System.err.println(s"Sentence Id: $sentenceId")
+  System.err.println("Sentence Id: "+sentenceId)
   // set sentenceId to 0 and run arg id'ing
   val zeroed = frames.map(setSentenceId(_, "0"))
   val results: List[String] = sem.predictArgumentLines(sentence, zeroed.asJava, kBest).asScala.toList

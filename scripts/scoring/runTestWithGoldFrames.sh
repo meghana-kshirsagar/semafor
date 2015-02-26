@@ -1,18 +1,19 @@
 #!/bin/bash
-set -e # fail fast
+#set -e # fail fast
 
 cv=$1  # "test" or "dev"
+experiments_dir=$2
+SCALA_HOME_BIN="/usr0/home/mkshirsa/research/packages/scala-2.10.4/bin"
 
 source "$(dirname ${BASH_SOURCE[0]})/../../training/config.sh"
 
-cd ${SEMAFOR_HOME}
+test_dir="${datadir}/fn_data"
+all_lemma_tags_file="${test_dir}/cv.${cv}.sentences.all.lemma.tags"
+tokenizedfile="${test_dir}/cv.${cv}.sentences.tokenized"
+gold_fe_file="${test_dir}/cv.${cv}.sentences.frame.elements"
 
-all_lemma_tags_file="${training_dir}/cv.${cv}.sentences.all.lemma.tags"
-tokenizedfile="${training_dir}/cv.${cv}.sentences.tokenized"
-gold_fe_file="${training_dir}/cv.${cv}.sentences.frame.elements"
 
-
-fn_1_5_dir="${datadir}/framenet15/"
+fn_1_5_dir="${SEMAFOR_HOME}/../framenet_data"
 frames_single_file="${fn_1_5_dir}/framesSingleFile.xml"
 relation_modified_file="${fn_1_5_dir}/frRelationModified.xml"
 
@@ -20,6 +21,7 @@ results_dir="${experiments_dir}/results"
 mkdir -p "${results_dir}"
 results_file="${results_dir}/argid_${cv}_exact"
 
+mkdir "${experiments_dir}/output"
 predicted_xml="${experiments_dir}/output/${cv}.argid.predict.xml"
 gold_xml="${experiments_dir}/output/${cv}.gold.xml"
 
@@ -42,14 +44,15 @@ ${JAVA_HOME_BIN}/java -classpath ${classpath} -Xms1g -Xmx1g \
 
 
 echo "Performing argument identification on ${cv} set, with model \"${model_name}\"..."
-scala \
+${SCALA_HOME_BIN}/scala \
   -cp "${classpath}" \
   -J-Xms4g \
   -J-Xmx4g \
   -J-XX:ParallelGCThreads=2 \
   scripts/scoring/parseToXmlWithGoldFrames.scala \
   ${model_name} \
-  ${cv}
+  ${cv} \
+  ${experiments_dir}
 
 
 echo "Evaluating argument identification on ${cv} set..."
