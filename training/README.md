@@ -27,9 +27,9 @@ clunky set of steps. Your kind patience is required to train the models :-)
 
 1) The first step is to create some data structures which are used to train and test the frame identification and argument identification models (please refer to our NAACL 2010 paper to understand these two steps). The first step is to create two maps -- I name these framenet.original.map and framenet.frame.element.map
 
-   i) The first map is of type THashMap<String, THashSet<String>>. It maps a frame to a set of disambiguated predicates 
+   i) The first map is of type THashMap\<String, THashSet\<String\>\>. It maps a frame to a set of disambiguated predicates 
       (words along with part of speech tags, but in the style of FrameNet). 
-   ii) The second map is of type THashMap<String,THashSet<String>>, which maps each frame to a set of frame element names. 
+   ii) The second map is of type THashMap\<String,THashSet\<String\>\>, which maps each frame to a set of frame element names. 
        In other words, this data structure is necessary for the argument identification model to know what 
        the frame elements are for each frame.
  
